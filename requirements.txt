@@ -1,0 +1,8 @@
+pandas
+numpy
+ta
+scikit-learn
+requests
+beautifulsoup4
+yfinance
+polygon-api-client
