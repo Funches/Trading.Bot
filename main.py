@@ -127,21 +127,5 @@ def main():
         time.sleep(60)
 
 
-            
-            df = add_technical_indicators(df)
-            news_score = get_news_sentiment()
-            model, scaler = train_ml_model(df)
-            signal = make_prediction(model, scaler, df)
-
-            action = "🟢 BUY" if signal == 1 and news_score >= 0 else "🔴 SELL"
-            price = df.iloc[-1]["close"]
-            print(f"[{datetime.datetime.now()}] Signal: {action} @ {price:.2f} | News score: {news_score}")
-            send_alert(f"{action} {STOCK} @ {price:.2f} | News score: {news_score}")
-        
-        except Exception as e:
-            print("⚠️ Error:", e)
-        
-        time.sleep(60)
-
 if __name__ == "__main__":
     main()
