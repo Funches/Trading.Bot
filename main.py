@@ -98,12 +98,18 @@ def make_prediction(model, scaler, df):
 def send_alert(message):
     if DISCORD_WEBHOOK != "YOUR_DISCORD_WEBHOOK":
         requests.post(DISCORD_WEBHOOK, json={"content": message})
-
 def main():
     print(f"✅ [{datetime.datetime.now()}] Bot Started")
     while True:
-        # fetch data, process, etc.
+        try:
+            df = fetch_data()
+            if df is None:
+                continue
+            # continue with indicators and ML
+        except Exception as e:
+            print(f"⚠️ Runtime error: {e}")
         time.sleep(60)
+
 
             
             df = add_technical_indicators(df)
