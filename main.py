@@ -103,11 +103,27 @@ def main():
     while True:
         try:
             df = fetch_data()
-            if df is None:
+            if df is None or df.empty:
+                print("⚠️ No data fetched. Retrying in 60s...")
+                time.sleep(60)
                 continue
-            # continue with indicators and ML
+
+            df = add_technical_indicators(df)
+            news_score = get_news_sentiment()
+            model, scaler = train_ml_model(df)
+            signal = make_prediction(model, scaler, df)
+
+            action = "🟢 BUY" if signal == 1 and news_score >= 0 else "🔴 SELL"
+            price = df.iloc[-1]["close"]
+            timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+            log_msg = f"[{timestamp}] Signal: {action} @ ${price:.2f} | News score: {news_score}"
+            print(log_msg)
+            send_alert(log_msg)
+
         except Exception as e:
-            print(f"⚠️ Runtime error: {e}")
+            print("⚠️ Error:", e)
+
         time.sleep(60)
 
 
