@@ -88,11 +88,12 @@ def train_ml_model(df):
     clf = RandomForestClassifier(n_estimators=100)
     clf.fit(X_train, y_train)
     return clf, scaler
-
+    
 def make_prediction(model, scaler, df):
-    latest = df.iloc[-1][["rsi", "macd", "sma", "obv"]].values.reshape(1, -1)
+    latest = df[["rsi", "macd", "sma", "obv"]].iloc[-1:]
     scaled = scaler.transform(latest)
     return model.predict(scaled)[0]
+
 
 def send_alert(message):
     if DISCORD_WEBHOOK != "YOUR_DISCORD_WEBHOOK":
