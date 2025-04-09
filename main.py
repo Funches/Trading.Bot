@@ -22,12 +22,31 @@ DISCORD_WEBHOOK = "YOUR_DISCORD_WEBHOOK"
 
 def fetch_data():
     try:
-        aggs = client.get_aggs(STOCK, 1, "minute", limit=LOOKBACK_DAYS)
-        df = pd.DataFrame(aggs)
-        df['timestamp'] = pd.to_datetime(df['timestamp'], unit='ms')
-        df.set_index('timestamp', inplace=True)
-        df.dropna(inplace=True)
+        end_date = datetime.datetime.now()
+        start_date = end_date - datetime.timedelta(days=2)
+
+        aggs = client.get_aggs(
+            ticker=STOCK,
+            multiplier=1,
+            timespan="minute",
+            from_=start_date.strftime("%Y-%m-%d"),
+            to=end_date.strftime("%Y-%m-%d"),
+            limit=5000
+        )
+
+        df = pd.DataFrame([{
+            "timestamp": datetime.datetime.fromtimestamp(bar.timestamp / 1000),
+            "open": bar.open,
+            "high": bar.high,
+            "low": bar.low,
+            "close": bar.close,
+            "volume": bar.volume
+        } for bar in aggs])
+        
+        df.set_index("timestamp", inplace=True)
+        df.sort_index(inplace=True)
         return df
+
     except Exception as e:
         print("Error fetching data from Polygon:", e)
         return None
