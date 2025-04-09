@@ -102,10 +102,9 @@ def send_alert(message):
 def main():
     print(f"✅ [{datetime.datetime.now()}] Bot Started")
     while True:
-        try:
-            df = fetch_data()
-            if df is None:
-                continue
+        # fetch data, process, etc.
+        time.sleep(60)
+
             
             df = add_technical_indicators(df)
             news_score = get_news_sentiment()
